@@ -1,0 +1,45 @@
+<?php
+if(!empty($_get['location']))
+{
+	//adding maps url and adding those values into location array 
+	$maps_url='https://maps.googleapis.com/maps/api/geocode/json?address=
+	'.$_get['location'];
+	//after that now we are reading content from file and storing into our json format
+	$maps_json=file_get_contents($maps_url);
+	//now we are converting our json to php array  by using function
+	$maps_array=json_decade($maps_json,true);
+	//this indidcates that it is decoded into json format and it is set to true
+	//which means it is converted.
+	$lat=$maps_array['results'][0]['geometry']['location']['lat'];
+	$lng=$maps_array['results'][0]['geometry']['location']['lng'];
+	$instagram_url='https://api.instagram.com/v1/media/search?lat='.$lat 
+	.'&lng=' .$lng . '&client_id=c3c5e810112d45a099aa307f51d89d4b';
+	$instagram_json=file_get_contents($instagram_url);
+	$instagram_array=json_decode($instagram_json, true);
+
+}
+?>
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8" />
+	<title>geogram</title>
+</head>
+<body>
+	<form action="" >
+	<input type="text" name="location" />
+	<button type="submit">Submit</button>
+	<br/>
+	<?php 
+	if(!empty($instagram_array))
+	{
+	foreach ($instagram_array['data'] as $image) {
+		# code...
+		
+		 echo '<img src="'.$image['images']['low_resolution']['url'].'" alt=""/><br/>';
+	}
+}?>
+
+
+	</form>
+</body>
+</html>
